@@ -10,6 +10,8 @@ import cPickle
 import select, socket, SocketServer, thread, urlparse, cStringIO
 import signal
 import re
+import faulthandler
+faulthandler.enable()
 try: # new mitmproxy?
     from mitmproxy import controller, proxy, flow, dump, cmdline, contentviews
     from mitmproxy.proxy.server import ProxyServer
@@ -495,7 +497,7 @@ class MailTab(wx.Panel):
         mails = event.mails
         self.grid_table = MailGridTable(mails, self.main_tab)
         self.grid.SetTable(self.grid_table)
-        self.grid.AutoSize()
+        #self.grid.AutoSize()
         self.grid.SetRowLabelSize(40)
         self.Layout()
         event.Skip()

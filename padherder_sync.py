@@ -8,7 +8,8 @@ import wx
 import custom_events
 import traceback
 from constants import *
-
+import faulthandler
+faulthandler.enable()
 __version__ = '0.1'
 
 API_ENDPOINT = 'https://www.padherder.com/user-api'
@@ -413,7 +414,8 @@ def do_sync(raw_captured_data, status_ctrl, region, simulate=False):
         for monster_id, material in material_map.items():
             new_count = material_counts.get(monster_id, 0)
             if new_count != material['count']:
-                sync_records.append(SyncRecord(SYNC_UPDATE_MATERIAL, monster_data[monster_id], dict(count=new_count, old_count=material['count']), material['url']))
+			    if monster_id != 4124:
+			        sync_records.append(SyncRecord(SYNC_UPDATE_MATERIAL, monster_data[monster_id], dict(count=new_count, old_count=material['count']), material['url']))
 
         # Maybe update rank
         if captured_data['lv'] != raw_user_data['profile']['rank']:
@@ -428,7 +430,9 @@ def do_sync(raw_captured_data, status_ctrl, region, simulate=False):
             add_status_msg(rec.run(session), status_ctrl, simulate)
         
         add_status_msg('Done', status_ctrl, simulate)
-    except:
+    except KeyError, e:
+        #pass
+        print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
         add_status_msg('Error doing sync:\n' + traceback.format_exc() + '\n\nPlease report this error on github', status_ctrl, simulate)
 
             
